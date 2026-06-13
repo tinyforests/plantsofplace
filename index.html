@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Plants of Place — an indigenous micro-nursery by Gardener &amp; Son</title>
+<meta name="description" content="Plants of Place is an indigenous micro-nursery by Gardener & Son. Plants grown from local seed and matched to the Country they belong to. Taking root now in Melbourne." />
+
+<!-- Family four-font system: Abril Fatface (hero), Fraunces (editorial), IBM Plex Sans (body), IBM Plex Mono (labels) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    /* Plants of Place — a greener cut of the Gardener & Son palette */
+    --ground:    #2C3526;  /* deep soil-forest green — POP's own ground */
+    --ground-2:  #3D4535;  /* family green, secondary dark */
+    --paper:     #FBF2E2;  /* warm cream */
+    --paper-2:   #F2E6CD;  /* paper, one shade down */
+    --growth:    #7C9A52;  /* new-growth green — POP signature accent */
+    --growth-lt: #93B364;  /* lighter growth, for hover/glow */
+    --sage:      #A8C285;  /* family sage */
+    --brass:     #B49A63;  /* Dry Grass Brass — family thread */
+    --ink:       #2C3526;  /* text on paper */
+    --ink-soft:  #5E6451;
+    --cream-soft:#E9DCC2;
+
+    --maxw: 1180px;
+    --gutter: clamp(1.25rem, 5vw, 4rem);
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"IBM Plex Sans", system-ui, sans-serif;
+    font-size:clamp(1rem, 0.96rem + 0.2vw, 1.12rem);
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  img{ max-width:100%; display:block; }
+  a{ color:inherit; }
+
+  /* Grain overlay — family standard */
+  body::before{
+    content:""; position:fixed; inset:0; z-index:9999; pointer-events:none;
+    opacity:.045; mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ---------- Type primitives ---------- */
+  .eyebrow{
+    font-family:"IBM Plex Mono", monospace;
+    font-size:.72rem; letter-spacing:.22em; text-transform:uppercase;
+    color:var(--brass); font-weight:500;
+  }
+  .display{ font-family:"Abril Fatface", serif; font-weight:400; line-height:.92; letter-spacing:-.01em; }
+  .editorial{ font-family:"Fraunces", serif; font-weight:400; line-height:1.12; letter-spacing:-.015em; }
+
+  .wrap{ max-width:var(--maxw); margin-inline:auto; padding-inline:var(--gutter); }
+
+  /* ---------- Nav ---------- */
+  .nav{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:1.1rem var(--gutter);
+    transition:background .4s ease, padding .4s ease, border-color .4s ease;
+    border-bottom:1px solid transparent;
+  }
+  .nav.scrolled{
+    background:rgba(44,53,38,.86);
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    padding-block:.7rem; border-bottom:1px solid rgba(180,154,99,.25);
+  }
+  .nav .brand{ display:flex; flex-direction:column; line-height:1.05; color:var(--paper); }
+  .nav .brand b{ font-family:"Fraunces",serif; font-weight:500; font-size:1.12rem; letter-spacing:-.01em; }
+  .nav .brand span{ font-family:"IBM Plex Mono",monospace; font-size:.6rem; letter-spacing:.18em; text-transform:uppercase; color:var(--sage); margin-top:2px; }
+  .nav .btn{ display:inline-block; }
+
+  .btn{
+    font-family:"IBM Plex Mono", monospace; font-size:.72rem; letter-spacing:.15em; text-transform:uppercase;
+    padding:.7rem 1.2rem; border-radius:100px; text-decoration:none; font-weight:500;
+    background:var(--growth); color:var(--ground); border:1px solid var(--growth);
+    transition:transform .25s ease, background .25s ease, color .25s ease;
+    cursor:pointer;
+  }
+  .btn:hover{ background:var(--growth-lt); transform:translateY(-2px); }
+  .btn.ghost{ background:transparent; color:var(--paper); border-color:rgba(180,154,99,.5); }
+  .btn.ghost:hover{ background:rgba(180,154,99,.12); }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    position:relative; background:var(--ground); color:var(--paper);
+    min-height:100svh; display:flex; align-items:center;
+    padding-top:6rem; overflow:hidden;
+  }
+  .hero .wrap{ position:relative; z-index:3; width:100%; }
+  .hero .eyebrow{ color:var(--sage); }
+  .hero h1{
+    font-family:"Abril Fatface", serif; font-weight:400;
+    font-size:clamp(3.4rem, 13vw, 9rem); line-height:.9; letter-spacing:-.02em;
+    margin:.5rem 0 1.4rem; max-width:13ch;
+  }
+  .hero h1 em{ font-style:normal; color:var(--growth-lt); }
+  .hero .lede{
+    font-family:"Fraunces", serif; font-size:clamp(1.2rem, 2.4vw, 1.7rem);
+    line-height:1.4; max-width:32ch; color:var(--cream-soft); font-weight:400;
+  }
+  .hero .note{
+    margin-top:2rem; font-family:"IBM Plex Mono", monospace; font-size:.78rem;
+    letter-spacing:.04em; color:var(--sage);
+    border-left:2px solid var(--brass); padding-left:.9rem; max-width:34ch;
+  }
+
+  /* germination line — signature, drawn on load */
+  .germination{
+    position:absolute; z-index:1; right:clamp(-2rem, 4vw, 6rem); bottom:0; top:0;
+    height:100%; width:min(34vw, 360px);
+    display:flex; align-items:flex-end; justify-content:center;
+    opacity:.9; pointer-events:none;
+  }
+  .germination svg{ height:92%; width:auto; }
+  .germination path{
+    fill:none; stroke:var(--growth-lt); stroke-width:1.4;
+    stroke-linecap:round; stroke-linejoin:round;
+    stroke-dasharray:1400; stroke-dashoffset:1400;
+    animation:draw 2.6s cubic-bezier(.22,.61,.36,1) forwards;
+  }
+  .germination .seed{ fill:var(--brass); stroke:none; opacity:0; animation:seed .6s ease forwards .2s; }
+  .germination .leaf{ animation-duration:1.8s; }
+  .germination .l2{ animation-delay:1s; }
+  .germination .l3{ animation-delay:1.5s; }
+  @keyframes draw{ to{ stroke-dashoffset:0; } }
+  @keyframes seed{ to{ opacity:1; } }
+
+  /* concentric provenance rings — quiet family geometry */
+  .rings{ position:absolute; z-index:0; pointer-events:none; opacity:.12; }
+  .rings.hero-rings{ left:-12vw; top:-12vw; width:60vw; height:60vw; }
+  .rings circle{ fill:none; stroke:var(--sage); stroke-width:1; }
+
+  /* ---------- Marquee ---------- */
+  .marquee{
+    background:var(--brass); color:var(--ground); overflow:hidden; white-space:nowrap;
+    padding-block:.75rem; border-block:1px solid rgba(44,53,38,.2);
+  }
+  .marquee__track{ display:inline-flex; gap:0; animation:scroll 38s linear infinite; }
+  .marquee span{
+    font-family:"IBM Plex Mono", monospace; font-size:.8rem; letter-spacing:.06em;
+    padding-inline:1.4rem; display:inline-flex; align-items:center;
+  }
+  .marquee i{ font-style:italic; }
+  .marquee .dot{ opacity:.45; }
+  @keyframes scroll{ to{ transform:translateX(-50%); } }
+
+  /* ---------- Section frame ---------- */
+  section{ padding-block:clamp(4.5rem, 9vw, 8rem); position:relative; }
+  .section-light{ background:var(--paper); color:var(--ink); }
+  .section-cream{ background:var(--paper-2); color:var(--ink); }
+  .section-dark{ background:var(--ground); color:var(--paper); }
+
+  .section-head{ max-width:40ch; margin-bottom:3rem; }
+  .section-head .eyebrow{ display:block; margin-bottom:1rem; }
+  .section-head h2{
+    font-family:"Fraunces", serif; font-weight:400;
+    font-size:clamp(2rem, 5vw, 3.4rem); line-height:1.06; letter-spacing:-.02em;
+  }
+
+  /* ---------- Ethos ---------- */
+  .ethos blockquote{
+    font-family:"Fraunces", serif; font-weight:400;
+    font-size:clamp(1.7rem, 4.2vw, 3rem); line-height:1.18; letter-spacing:-.02em;
+    max-width:18ch; margin-bottom:2rem;
+  }
+  .ethos blockquote em{ font-style:italic; color:var(--growth); }
+  .ethos .body{ max-width:46ch; color:var(--ink-soft); }
+  .ethos-grid{ display:grid; grid-template-columns:1.1fr .9fr; gap:clamp(2rem,5vw,4rem); align-items:end; }
+  .ethos .aside{
+    border-top:1px solid rgba(180,154,99,.4); padding-top:1.2rem;
+    font-family:"IBM Plex Mono", monospace; font-size:.78rem; line-height:1.9; color:var(--ink-soft);
+  }
+  .ethos .aside b{ color:var(--ink); font-weight:500; }
+
+  /* ---------- Process / from seed to garden ---------- */
+  .steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; }
+  .step{
+    background:var(--paper); border:1px solid rgba(44,53,38,.12); border-radius:14px;
+    padding:2rem 1.8rem; position:relative; overflow:hidden;
+  }
+  .section-cream .step{ background:var(--paper); }
+  .step::before{ content:""; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--growth); }
+  .step .num{ font-family:"IBM Plex Mono", monospace; font-size:.72rem; letter-spacing:.16em; color:var(--brass); }
+  .step .tag{
+    display:inline-block; margin-top:.5rem; font-family:"IBM Plex Mono", monospace;
+    font-size:.66rem; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-soft);
+  }
+  .step h3{ font-family:"Fraunces", serif; font-weight:500; font-size:1.5rem; letter-spacing:-.01em; margin:.7rem 0 .6rem; }
+  .step p{ font-size:.98rem; color:var(--ink-soft); }
+
+  /* ---------- Ecosystem ---------- */
+  .eco .section-head h2{ max-width:18ch; }
+  .eco-lede{ max-width:50ch; color:var(--cream-soft); margin-bottom:3rem; }
+  .eco-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:1px; background:rgba(180,154,99,.25); border:1px solid rgba(180,154,99,.25); border-radius:14px; overflow:hidden; }
+  .eco-cell{
+    background:var(--ground); padding:1.6rem 1.4rem; min-height:130px;
+    display:flex; flex-direction:column; justify-content:space-between;
+    transition:background .3s ease;
+  }
+  .eco-cell:hover{ background:var(--ground-2); }
+  .eco-cell .k{ font-family:"IBM Plex Mono", monospace; font-size:.64rem; letter-spacing:.14em; text-transform:uppercase; color:var(--sage); }
+  .eco-cell .v{ font-family:"Fraunces", serif; font-size:1.35rem; letter-spacing:-.01em; }
+  .eco-cell.here{ background:var(--growth); }
+  .eco-cell.here .k{ color:var(--ground); }
+  .eco-cell.here .v{ color:var(--ground); font-weight:500; }
+  .eco-cell.here .you{ font-family:"IBM Plex Mono", monospace; font-size:.6rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ground); opacity:.7; }
+
+  /* ---------- Register ---------- */
+  .register{ position:relative; overflow:hidden; }
+  .rings.reg-rings{ right:-14vw; bottom:-14vw; width:48vw; height:48vw; opacity:.1; }
+  .rings.reg-rings circle{ stroke:var(--brass); }
+  .register .inner{ max-width:560px; position:relative; z-index:2; }
+  .register h2{ font-family:"Fraunces", serif; font-weight:400; font-size:clamp(1.9rem,4.5vw,3rem); line-height:1.1; letter-spacing:-.02em; margin:1rem 0 1rem; max-width:16ch; }
+  .register p{ color:var(--ink-soft); max-width:42ch; margin-bottom:1.8rem; }
+  .form{ display:flex; gap:.6rem; flex-wrap:wrap; }
+  .form input[type=email]{
+    flex:1 1 240px; min-width:0; padding:.9rem 1.1rem; border-radius:100px;
+    border:1px solid rgba(44,53,38,.3); background:var(--paper); color:var(--ink);
+    font-family:"IBM Plex Sans", sans-serif; font-size:1rem;
+  }
+  .form input[type=email]:focus{ outline:2px solid var(--growth); outline-offset:1px; border-color:var(--growth); }
+  .form .btn{ flex:0 0 auto; padding-block:.9rem; }
+  .form-note{ margin-top:1rem; font-family:"IBM Plex Mono", monospace; font-size:.7rem; letter-spacing:.04em; color:var(--ink-soft); }
+  .confirm{ display:none; }
+  .confirm.show{ display:block; }
+  .confirm .ok{ font-family:"Fraunces", serif; font-size:1.5rem; letter-spacing:-.01em; margin-bottom:.4rem; }
+  .confirm .ok .leaf{ color:var(--growth); }
+
+  /* ---------- Acknowledgement of Country ---------- */
+  .aoc{ background:var(--ground-2); color:var(--paper); }
+  .aoc .wrap{ max-width:760px; }
+  .aoc .eyebrow{ color:var(--brass); display:block; margin-bottom:1.4rem; }
+  .aoc p{ font-family:"Fraunces", serif; font-size:clamp(1.1rem,2.4vw,1.5rem); line-height:1.55; letter-spacing:-.01em; color:var(--cream-soft); }
+  .aoc p + p{ margin-top:1.1rem; }
+  .aoc .last{ font-family:"IBM Plex Mono", monospace; font-size:.78rem; letter-spacing:.1em; text-transform:uppercase; color:var(--sage); margin-top:1.8rem; }
+
+  /* ---------- Footer ---------- */
+  footer{ background:var(--ground); color:var(--paper); padding-block:clamp(3rem,6vw,5rem); border-top:1px solid rgba(180,154,99,.2); }
+  .foot-grid{ display:grid; grid-template-columns:1.3fr 1fr 1fr; gap:2rem; }
+  .foot-grid .mk{ font-family:"Abril Fatface", serif; font-size:1.8rem; line-height:1; }
+  .foot-grid .mk span{ display:block; font-family:"IBM Plex Mono", monospace; font-size:.62rem; letter-spacing:.18em; text-transform:uppercase; color:var(--sage); margin-top:.7rem; }
+  .foot-col h4{ font-family:"IBM Plex Mono", monospace; font-size:.66rem; letter-spacing:.16em; text-transform:uppercase; color:var(--brass); margin-bottom:.9rem; font-weight:500; }
+  .foot-col p, .foot-col a{ font-size:.92rem; color:var(--cream-soft); text-decoration:none; line-height:1.7; display:block; }
+  .foot-col a:hover{ color:var(--growth-lt); }
+  .foot-bottom{ margin-top:3rem; padding-top:1.5rem; border-top:1px solid rgba(180,154,99,.18); display:flex; justify-content:space-between; flex-wrap:wrap; gap:1rem; }
+  .foot-bottom span{ font-family:"IBM Plex Mono", monospace; font-size:.66rem; letter-spacing:.08em; color:var(--sage); }
+
+  /* ---------- Reveal ---------- */
+  .reveal{ opacity:0; transform:translateY(22px); transition:opacity .8s ease, transform .8s ease; }
+  .reveal.in{ opacity:1; transform:none; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:860px){
+    .ethos-grid{ grid-template-columns:1fr; align-items:start; }
+    .steps{ grid-template-columns:1fr; }
+    .foot-grid{ grid-template-columns:1fr 1fr; }
+    .germination{ width:42vw; opacity:.5; }
+  }
+  @media (max-width:560px){
+    .nav .brand span{ display:none; }
+    .foot-grid{ grid-template-columns:1fr; }
+    .germination{ display:none; }
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{ animation:none !important; transition:none !important; scroll-behavior:auto; }
+    .germination path{ stroke-dashoffset:0; }
+    .germination .seed{ opacity:1; }
+    .reveal{ opacity:1; transform:none; }
+    .marquee__track{ transform:none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<nav class="nav" id="nav">
+  <a class="brand" href="#top" style="text-decoration:none">
+    <b>Plants of Place</b>
+    <span>An indigenous nursery · Gardener &amp; Son</span>
+  </a>
+  <a class="btn" href="#register">Register interest</a>
+</nav>
+
+<!-- ===== HERO ===== -->
+<header class="hero" id="top">
+  <svg class="rings hero-rings" viewBox="0 0 400 400" aria-hidden="true">
+    <circle cx="200" cy="200" r="60"/><circle cx="200" cy="200" r="110"/>
+    <circle cx="200" cy="200" r="160"/><circle cx="200" cy="200" r="198"/>
+  </svg>
+
+  <div class="germination" aria-hidden="true">
+    <svg viewBox="0 0 200 620" preserveAspectRatio="xMidYMax meet">
+      <!-- seed -->
+      <ellipse class="seed" cx="100" cy="588" rx="7" ry="4"/>
+      <!-- roots -->
+      <path d="M100 588 C 92 600, 80 606, 70 616 M100 588 C 108 600, 122 606, 134 616 M100 588 C 100 604, 98 612, 96 620"/>
+      <!-- main stem -->
+      <path d="M100 588 C 102 500, 90 440, 100 360 C 110 280, 96 220, 100 120 C 102 80, 100 60, 100 40"/>
+      <!-- leaf 1 -->
+      <path class="leaf" d="M100 360 C 60 350, 38 322, 36 286 C 70 296, 96 322, 100 360 Z"/>
+      <!-- leaf 2 -->
+      <path class="leaf l2" d="M100 250 C 140 242, 162 214, 164 180 C 130 188, 104 214, 100 250 Z"/>
+      <!-- crown shoot -->
+      <path class="leaf l3" d="M100 120 C 82 96, 78 70, 86 44 C 100 60, 104 92, 100 120 Z"/>
+    </svg>
+  </div>
+
+  <div class="wrap">
+    <p class="eyebrow">Indigenous micro-nursery · Naarm / Melbourne</p>
+    <h1 class="display">Plants of <em>place.</em></h1>
+    <p class="lede">Indigenous plants, grown from local seed and matched to the Country they belong to.</p>
+    <p class="note">The nursery is being established at the Gardener &amp; Son studios. The first plants will be ready soon.</p>
+  </div>
+</header>
+
+<!-- ===== MARQUEE ===== -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee__track">
+    <span><i>Themeda triandra</i> · Kangaroo Grass</span><span class="dot">✦</span>
+    <span><i>Bursaria spinosa</i> · Sweet Bursaria</span><span class="dot">✦</span>
+    <span>EVC 175 · Grassy Woodland</span><span class="dot">✦</span>
+    <span><i>Microlaena stipoides</i> · Weeping Grass</span><span class="dot">✦</span>
+    <span><i>Dianella revoluta</i> · Black-anther Flax-lily</span><span class="dot">✦</span>
+    <span>EVC 934 · Brackish Grassland</span><span class="dot">✦</span>
+    <span><i>Poa labillardierei</i> · Common Tussock-grass</span><span class="dot">✦</span>
+    <!-- duplicated for seamless loop -->
+    <span><i>Themeda triandra</i> · Kangaroo Grass</span><span class="dot">✦</span>
+    <span><i>Bursaria spinosa</i> · Sweet Bursaria</span><span class="dot">✦</span>
+    <span>EVC 175 · Grassy Woodland</span><span class="dot">✦</span>
+    <span><i>Microlaena stipoides</i> · Weeping Grass</span><span class="dot">✦</span>
+    <span><i>Dianella revoluta</i> · Black-anther Flax-lily</span><span class="dot">✦</span>
+    <span>EVC 934 · Brackish Grassland</span><span class="dot">✦</span>
+    <span><i>Poa labillardierei</i> · Common Tussock-grass</span><span class="dot">✦</span>
+  </div>
+</div>
+
+<!-- ===== ETHOS ===== -->
+<section class="section-light ethos">
+  <div class="wrap ethos-grid">
+    <div class="reveal">
+      <p class="eyebrow" style="margin-bottom:1.5rem">Why provenance matters</p>
+      <blockquote class="editorial">A plant of place carries the genetics of its <em>locality</em> — the drought it has learned, the soil that shaped it, the seasons it keeps.</blockquote>
+      <p class="body">That memory is the difference between a garden that survives and one that belongs. It cannot be bought off the back of a wholesale truck, and it cannot be hurried. So we grow it ourselves — close to home, in small numbers, from seed collected within reach of where the plants are going back into the ground.</p>
+    </div>
+    <div class="reveal aside">
+      <b>What we mean by "of place"</b><br>
+      Local provenance — seed and cuttings gathered within defined indigenous provenance zones, rather than the nearest commercial stock.<br><br>
+      <b>Why it holds</b><br>
+      Plants raised from local genetics establish faster, ask for less water, and keep the local food web intact.
+    </div>
+  </div>
+</section>
+
+<!-- ===== PROCESS ===== -->
+<section class="section-cream">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">From seed to garden</span>
+      <h2 class="editorial">Three steps, in order — because order is the whole point.</h2>
+    </div>
+    <div class="steps">
+      <article class="step reveal">
+        <span class="num">01</span>
+        <span class="tag">Provenance</span>
+        <h3>Seed of place</h3>
+        <p>Seed and cutting material is collected within local provenance zones, so each plant is genetically of <em>here</em> — not merely of its species.</p>
+      </article>
+      <article class="step reveal">
+        <span class="num">02</span>
+        <span class="tag">Propagation</span>
+        <h3>Grown on, slowly</h3>
+        <p>Small batches raised by hand at the studio. We grow what the gardens need, when they need it, rather than what fills a wholesale order.</p>
+      </article>
+      <article class="step reveal">
+        <span class="num">03</span>
+        <span class="tag">Placement</span>
+        <h3>Matched to Country</h3>
+        <p>Every plant is matched to its Ecological Vegetation Class, so it returns to a garden that resembles the living system it evolved inside.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ECOSYSTEM ===== -->
+<section class="section-dark eco">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">One layer of a larger system</span>
+      <h2 class="editorial">Plants of Place is the nursery inside Gardener &amp; Son.</h2>
+    </div>
+    <p class="eco-lede reveal">The gardens we design need plants we can stand behind. So the nursery sits alongside the rest of the practice — the design studio, the objects we keep, the ecological record we maintain. Each part feeds the next.</p>
+    <div class="eco-grid reveal">
+      <div class="eco-cell"><span class="k">Studio</span><span class="v">Gardens</span></div>
+      <div class="eco-cell here"><span class="k">You are here</span><span class="v">Plants</span><span class="you">Plants of Place</span></div>
+      <div class="eco-cell"><span class="k">Imprint</span><span class="v">Objects</span></div>
+      <div class="eco-cell"><span class="k">Record</span><span class="v">Registry</span></div>
+      <div class="eco-cell"><span class="k">Field notes</span><span class="v">Stories</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== REGISTER ===== -->
+<section class="section-light register" id="register">
+  <svg class="rings reg-rings" viewBox="0 0 400 400" aria-hidden="true">
+    <circle cx="200" cy="200" r="70"/><circle cx="200" cy="200" r="120"/>
+    <circle cx="200" cy="200" r="168"/><circle cx="200" cy="200" r="200"/>
+  </svg>
+  <div class="wrap">
+    <div class="inner reveal">
+      <span class="eyebrow">The nursery is taking root</span>
+      <h2 class="editorial">Be told when the first plants are ready.</h2>
+      <p>Leave an email and we'll be in touch as Plants of Place opens — first for Gardener &amp; Son garden clients, then more widely.</p>
+
+      <form class="form" id="registerForm" novalidate>
+        <label for="email" style="position:absolute;left:-9999px">Email address</label>
+        <input type="email" id="email" name="email" placeholder="you@email.com" autocomplete="email" required />
+        <button class="btn" type="submit">Notify me</button>
+      </form>
+      <p class="form-note" id="formNote">We'll only write about the nursery. No lists, no noise.</p>
+
+      <div class="confirm" id="confirm" role="status" aria-live="polite">
+        <p class="ok"><span class="leaf">✦</span> You're on the list.</p>
+        <p style="color:var(--ink-soft);max-width:40ch">Thank you. We'll let you know the moment the first plants are ready to leave the studio.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ACKNOWLEDGEMENT OF COUNTRY ===== -->
+<section class="aoc">
+  <div class="wrap">
+    <span class="eyebrow">Acknowledgement of Country</span>
+    <p>Gardener &amp; Son works on the unceded lands of the Wurundjeri Woi-wurrung people of the Kulin Nation. We acknowledge them as the first and continuing custodians of this Country, and the deep knowledge of plants and place that has tended it for tens of thousands of years.</p>
+    <p>Plants of Place exists in conversation with that knowledge, never in place of it.</p>
+    <p class="last">Sovereignty was never ceded.</p>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="mk">Plants of Place<span>An indigenous nursery by Gardener &amp; Son</span></div>
+      </div>
+      <div class="foot-col">
+        <h4>Studios</h4>
+        <p>2 Churchill Street<br>Mont Albert VIC 3127</p>
+        <p style="margin-top:.8rem">140 Auburn Road<br>Hawthorn VIC 3122</p>
+      </div>
+      <div class="foot-col">
+        <h4>Elsewhere</h4>
+        <a href="https://www.gardenerandson.com">gardenerandson.com</a>
+        <a href="#register">Register interest</a>
+        <a href="#top">Back to top</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© <span id="yr"></span> Gardener &amp; Son</span>
+      <span>Grown in Naarm / Melbourne</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // year
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  // nav scrolled state
+  const nav = document.getElementById('nav');
+  const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 40);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive:true });
+
+  // scroll reveal
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold:0.15 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // register form — client-side confirmation
+  const form = document.getElementById('registerForm');
+  const note = document.getElementById('formNote');
+  const confirm = document.getElementById('confirm');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('email').value.trim();
+    const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if (!valid){
+      note.textContent = 'Please enter a valid email address.';
+      note.style.color = 'var(--growth)';
+      return;
+    }
+
+    // ── Wire-up point ──────────────────────────────────────────────
+    // To persist signups, POST `email` to your Google Apps Script web
+    // app endpoint here (same pattern as the "Where Gardens Begin"
+    // backend), e.g.:
+    //
+    // await fetch(SCRIPT_URL, {
+    //   method:'POST',
+    //   body: new URLSearchParams({ email, source:'plants-of-place' })
+    // });
+    // ───────────────────────────────────────────────────────────────
+
+    form.style.display = 'none';
+    note.style.display = 'none';
+    confirm.classList.add('show');
+  });
+</script>
+</body>
+</html>

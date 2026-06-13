@@ -475,6 +475,9 @@
 </footer>
 
 <script>
+  // Paste your deployed Apps Script Web App URL here (ends in /exec)
+  const SIGNUP_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxoQgPE0PW7YD5ulPl5PmOcfno6Mw2Ep94XS1IytTDKaDZzWmEfex-ZrB72EXxZm5cy/exec';
+
   // year
   document.getElementById('yr').textContent = new Date().getFullYear();
 
@@ -504,16 +507,18 @@
       return;
     }
 
-    // ── Wire-up point ──────────────────────────────────────────────
-    // To persist signups, POST `email` to your Google Apps Script web
-    // app endpoint here (same pattern as the "Where Gardens Begin"
-    // backend), e.g.:
-    //
-    // await fetch(SCRIPT_URL, {
-    //   method:'POST',
-    //   body: new URLSearchParams({ email, source:'plants-of-place' })
-    // });
-    // ───────────────────────────────────────────────────────────────
+    // Send to the Plants of Place signup backend (Google Apps Script).
+    // no-cors: the write succeeds; the response is opaque, which is fine for
+    // a waitlist — we confirm optimistically and never block the user on a
+    // network hiccup.
+    try {
+      await fetch(SIGNUP_ENDPOINT, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ email, source: 'plants-of-place-holding' })
+      });
+    } catch (_) { /* offline or blocked — still confirm */ }
 
     form.style.display = 'none';
     note.style.display = 'none';

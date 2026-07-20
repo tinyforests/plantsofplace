@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plants of Place — the plants that belong here</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Fraunces:ital,opsz,wght@0,9..144,400;1,9..144,400;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --soil:#2C3526;        /* Plants of Place deep soil-forest green */
+    --paper:#FFF0DC;       /* G&S beige */
+    --card:#FAF2E1;        /* lifted paper for cards */
+    --growth:#7C9A52;      /* Plants of Place new-growth accent */
+    --leaf:#A8C285;        /* G&S sage accent */
+    --brass:#B49A63;       /* Dry Grass Brass — hairlines on light only */
+    --soil-70:rgba(44,53,38,.70);
+    --soil-45:rgba(44,53,38,.45);
+    --soil-15:rgba(44,53,38,.15);
+    --paper-70:rgba(255,240,220,.70);
+    --paper-45:rgba(255,240,220,.45);
+    --paper-15:rgba(255,240,220,.14);
+    --maxw:1200px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--paper);
+    color:var(--soil);
+    font-family:'IBM Plex Sans',system-ui,sans-serif;
+    font-size:16px;line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  /* grain overlay */
+  body::before{
+    content:"";position:fixed;inset:0;z-index:9999;pointer-events:none;
+    opacity:.035;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  ::selection{background:var(--growth);color:var(--paper)}
+  a{color:inherit}
+  button{font-family:inherit;cursor:pointer;border:none;background:none}
+  h1,h2,h3{line-height:1.02;letter-spacing:-.01em}
+  .display{font-family:'Abril Fatface',serif;font-weight:400}
+  .mono{font-family:'IBM Plex Mono',monospace}
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;font-size:.7rem;
+    letter-spacing:.26em;text-transform:uppercase;
+  }
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:20px clamp(20px,5vw,56px);
+    transition:background .35s ease,padding .35s ease,box-shadow .35s ease;
+  }
+  nav.scrolled{
+    background:var(--paper);padding:13px clamp(20px,5vw,56px);
+    box-shadow:0 1px 0 var(--soil-15);
+  }
+  .brand{display:flex;align-items:baseline;gap:11px;text-decoration:none}
+  .brand .mark{font-family:'Abril Fatface',serif;font-size:1.32rem;letter-spacing:-.01em}
+  .brand .sub{font-family:'IBM Plex Mono',monospace;font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;color:var(--growth)}
+  nav.on-dark .brand{color:var(--paper)}
+  nav.on-dark .brand .sub{color:var(--leaf)}
+  .patch-btn{
+    display:flex;align-items:center;gap:10px;
+    font-family:'IBM Plex Mono',monospace;font-size:.72rem;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--soil);
+    border:1px solid var(--soil);padding:9px 15px 8px;
+    transition:background .2s,color .2s,border-color .2s;
+  }
+  nav.on-dark .patch-btn{color:var(--paper);border-color:var(--paper-45)}
+  .patch-btn:hover{background:var(--growth);border-color:var(--growth);color:var(--paper)}
+  .patch-count{
+    background:var(--growth);color:var(--paper);
+    min-width:20px;height:20px;padding:0 5px;
+    display:inline-flex;align-items:center;justify-content:center;
+    font-size:.68rem;transition:transform .25s cubic-bezier(.3,1.6,.5,1);
+  }
+  .patch-count.bump{transform:scale(1.45)}
+  nav.on-dark .patch-count{background:var(--leaf);color:var(--soil)}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    background:var(--soil);color:var(--paper);
+    min-height:100svh;display:flex;align-items:center;
+    padding:120px clamp(20px,5vw,56px) 70px;position:relative;overflow:hidden;
+  }
+  /* concentric geometry */
+  .hero .rings{position:absolute;right:-14vw;top:50%;transform:translateY(-50%);
+    width:min(80vh,780px);height:min(80vh,780px);opacity:.5;pointer-events:none}
+  .hero .rings circle{fill:none;stroke:var(--paper-15);stroke-width:1}
+  .hero-inner{max-width:var(--maxw);margin:0 auto;width:100%;position:relative;z-index:2}
+  .hero .eyebrow{color:var(--leaf);margin-bottom:26px;opacity:0;animation:rise .9s .1s forwards}
+  .hero h1{
+    font-family:'Abril Fatface',serif;font-weight:400;
+    font-size:clamp(2.7rem,7vw,5.6rem);line-height:.98;max-width:15ch;
+    margin-bottom:8px;opacity:0;animation:rise 1s .22s forwards;
+  }
+  .hero h1 em{font-family:'Fraunces',serif;font-style:italic;font-weight:400;color:var(--leaf)}
+  .hero .lede{
+    font-size:clamp(1rem,1.5vw,1.18rem);color:var(--paper-70);
+    max-width:46ch;margin:24px 0 40px;opacity:0;animation:rise 1s .4s forwards;
+  }
+  @keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+
+  /* place finder */
+  .finder{opacity:0;animation:rise 1s .55s forwards;max-width:560px}
+  .finder-label{font-family:'IBM Plex Mono',monospace;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--leaf);margin-bottom:12px;display:block}
+  .finder-row{display:flex;border:1px solid var(--paper-45);background:rgba(255,240,220,.05)}
+  .finder-row input{
+    flex:1;background:transparent;border:none;outline:none;color:var(--paper);
+    font-family:'IBM Plex Sans';font-size:1rem;padding:17px 18px;
+  }
+  .finder-row input::placeholder{color:var(--paper-45)}
+  .finder-row button{
+    background:var(--growth);color:var(--paper);
+    font-family:'IBM Plex Mono',monospace;font-size:.75rem;letter-spacing:.14em;
+    text-transform:uppercase;padding:0 26px;transition:background .2s;white-space:nowrap;
+  }
+  .finder-row button:hover{background:var(--leaf);color:var(--soil)}
+  .chips{display:flex;gap:9px;margin-top:16px;flex-wrap:wrap}
+  .chip{
+    font-family:'IBM Plex Mono',monospace;font-size:.72rem;letter-spacing:.05em;
+    color:var(--paper-70);border:1px solid var(--paper-15);padding:7px 13px;
+    transition:border-color .2s,color .2s;
+  }
+  .chip:hover{border-color:var(--leaf);color:var(--paper)}
+  .chip span{color:var(--leaf)}
+
+  /* ---------- PLACE BANNER ---------- */
+  .place{
+    background:var(--paper);padding:0;max-height:0;overflow:hidden;
+    transition:max-height .6s ease;
+  }
+  .place.open{max-height:640px}
+  .place-inner{max-width:var(--maxw);margin:0 auto;padding:70px clamp(20px,5vw,56px) 10px}
+  .place-tag{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+  .place-tag .code{
+    font-family:'IBM Plex Mono',monospace;font-size:.8rem;letter-spacing:.08em;
+    background:var(--soil);color:var(--paper);padding:6px 11px;
+  }
+  .place-tag .rule{height:1px;flex:1;background:var(--brass)}
+  .place h2{font-family:'Abril Fatface',serif;font-size:clamp(2rem,5vw,3.4rem);margin-bottom:16px}
+  .place .desc{max-width:60ch;color:var(--soil-70);font-size:1.05rem;margin-bottom:8px}
+  .place .switch{margin-top:22px;font-family:'IBM Plex Mono',monospace;font-size:.74rem;letter-spacing:.06em;color:var(--soil-45)}
+  .place .switch a{color:var(--growth);text-decoration:none;border-bottom:1px solid var(--growth);cursor:pointer}
+
+  /* ---------- PALETTE / STRATA ---------- */
+  .palette{max-width:var(--maxw);margin:0 auto;padding:30px clamp(20px,5vw,56px) 90px;position:relative}
+  .palette-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:12px;padding-top:34px;border-top:1px solid var(--brass)}
+  .palette-head .eyebrow{color:var(--growth)}
+  .palette-head h3{font-family:'Abril Fatface',serif;font-size:clamp(1.5rem,3vw,2.1rem);margin-top:8px}
+  .palette-head .count{font-family:'IBM Plex Mono',monospace;font-size:.78rem;color:var(--soil-45)}
+
+  .strata{position:relative}
+  /* vertical section scale (signature element) */
+  .section-scale{
+    position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--soil-15);
+  }
+  .band{position:relative;padding:44px 0 44px 0}
+  .band+.band{border-top:1px dashed var(--soil-15)}
+  .band-head{display:flex;align-items:baseline;gap:16px;margin-bottom:26px;flex-wrap:wrap}
+  .band-head .layer{font-family:'Abril Fatface',serif;font-size:clamp(1.3rem,2.6vw,1.9rem)}
+  .band-head .h{font-family:'IBM Plex Mono',monospace;font-size:.74rem;letter-spacing:.1em;color:var(--growth);padding:3px 9px;border:1px solid var(--growth)}
+  .band-head .role{font-size:.92rem;color:var(--soil-45);max-width:46ch}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1px;background:var(--soil-15)}
+  .card{
+    background:var(--card);padding:24px 22px 22px;position:relative;
+    display:flex;flex-direction:column;min-height:340px;
+    opacity:0;transform:translateY(20px);transition:opacity .7s ease,transform .7s ease;
+  }
+  .card.in{opacity:1;transform:none}
+  .card::before{content:"";position:absolute;top:0;left:0;width:44px;height:3px;background:var(--growth)}
+  .card .glyph{width:52px;height:52px;margin-bottom:18px;color:var(--growth)}
+  .card .glyph svg{width:100%;height:100%}
+  .card .bot{font-family:'IBM Plex Mono',monospace;font-size:.78rem;letter-spacing:.02em;color:var(--soil-45);font-style:normal;margin-bottom:3px}
+  .card .com{font-family:'Abril Fatface',serif;font-size:1.32rem;line-height:1.08;margin-bottom:12px}
+  .card .note{font-size:.86rem;color:var(--soil-70);line-height:1.5;margin-bottom:auto}
+  .card .prov{display:flex;align-items:center;gap:7px;font-family:'IBM Plex Mono',monospace;font-size:.64rem;letter-spacing:.08em;text-transform:uppercase;color:var(--brass);margin:16px 0 14px}
+  .card .prov::before{content:"";width:5px;height:5px;background:var(--growth);display:inline-block}
+
+  .buy{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid var(--soil-15);padding-top:14px}
+  .size-sel{position:relative}
+  .size-sel select{
+    appearance:none;font-family:'IBM Plex Mono',monospace;font-size:.72rem;letter-spacing:.04em;
+    color:var(--soil);background:transparent;border:1px solid var(--soil-15);
+    padding:7px 26px 7px 10px;cursor:pointer;
+  }
+  .size-sel::after{content:"▾";position:absolute;right:9px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--soil-45);font-size:.7rem}
+  .buy .price{font-family:'IBM Plex Mono',monospace;font-size:.98rem;font-weight:500}
+  .add{
+    background:var(--soil);color:var(--paper);width:38px;height:38px;flex:0 0 38px;
+    display:flex;align-items:center;justify-content:center;font-size:1.2rem;line-height:1;
+    transition:background .2s,transform .1s;
+  }
+  .add:hover{background:var(--growth)}
+  .add:active{transform:scale(.9)}
+  .cardfoot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px}
+  .price-line{display:flex;flex-direction:column}
+  .price-line .per{font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:var(--soil-45)}
+
+  /* ---------- ETHOS STRIP ---------- */
+  .ethos{background:var(--soil);color:var(--paper);padding:90px clamp(20px,5vw,56px);text-align:center}
+  .ethos .eyebrow{color:var(--leaf);margin-bottom:24px}
+  .ethos p{font-family:'Fraunces',serif;font-style:italic;font-weight:400;font-size:clamp(1.4rem,3.4vw,2.3rem);line-height:1.25;max-width:22ch;margin:0 auto;color:var(--paper)}
+  .ethos p b{font-style:normal;font-weight:400;color:var(--leaf)}
+
+  /* marquee */
+  .marquee{background:var(--growth);color:var(--soil);overflow:hidden;white-space:nowrap;padding:11px 0;border-top:1px solid var(--soil);border-bottom:1px solid var(--soil)}
+  .marquee div{display:inline-block;animation:scroll 32s linear infinite;font-family:'IBM Plex Mono',monospace;font-size:.76rem;letter-spacing:.12em;text-transform:uppercase}
+  .marquee span{padding:0 26px}
+  .marquee span::after{content:"✦";margin-left:52px;color:var(--soil-45)}
+  @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+  /* ---------- FOOTER ---------- */
+  footer{background:var(--paper);padding:74px clamp(20px,5vw,56px) 50px}
+  .foot-inner{max-width:var(--maxw);margin:0 auto;display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:40px}
+  footer .mark{font-family:'Abril Fatface',serif;font-size:1.6rem;margin-bottom:12px}
+  footer .by{font-family:'IBM Plex Mono',monospace;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--soil-45);margin-bottom:18px}
+  footer .blurb{font-size:.92rem;color:var(--soil-70);max-width:38ch}
+  footer h4{font-family:'IBM Plex Mono',monospace;font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--growth);margin-bottom:16px}
+  footer ul{list-style:none}
+  footer li{font-size:.9rem;color:var(--soil-70);margin-bottom:9px}
+  footer li b{font-weight:500;color:var(--soil)}
+  .foot-rule{max-width:var(--maxw);margin:52px auto 0;padding-top:22px;border-top:1px solid var(--brass);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-family:'IBM Plex Mono',monospace;font-size:.68rem;letter-spacing:.06em;color:var(--soil-45)}
+
+  /* ---------- PATCH DRAWER ---------- */
+  .scrim{position:fixed;inset:0;background:rgba(44,53,38,.5);z-index:200;opacity:0;pointer-events:none;transition:opacity .35s}
+  .scrim.open{opacity:1;pointer-events:auto}
+  .drawer{
+    position:fixed;top:0;right:0;bottom:0;width:min(440px,100vw);z-index:210;
+    background:var(--paper);transform:translateX(100%);transition:transform .4s cubic-bezier(.4,0,.1,1);
+    display:flex;flex-direction:column;
+  }
+  .drawer.open{transform:none}
+  .drawer-head{padding:26px 26px 20px;border-bottom:1px solid var(--brass);display:flex;justify-content:space-between;align-items:flex-start}
+  .drawer-head .t{font-family:'Abril Fatface',serif;font-size:1.7rem;line-height:1}
+  .drawer-head .s{font-family:'IBM Plex Mono',monospace;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--growth);margin-top:6px}
+  .drawer-close{font-size:1.5rem;line-height:1;color:var(--soil);padding:2px 6px}
+  .drawer-body{flex:1;overflow-y:auto;padding:8px 26px}
+  .empty{padding:60px 0;text-align:center;color:var(--soil-45)}
+  .empty svg{width:56px;height:56px;color:var(--soil-15);margin-bottom:16px}
+  .empty p{font-size:.92rem;max-width:28ch;margin:0 auto;line-height:1.5}
+  .line{display:flex;gap:14px;padding:20px 0;border-bottom:1px solid var(--soil-15)}
+  .line .lglyph{width:38px;height:38px;flex:0 0 38px;color:var(--growth)}
+  .line .linfo{flex:1;min-width:0}
+  .line .lcom{font-family:'Abril Fatface',serif;font-size:1.02rem;line-height:1.1}
+  .line .lbot{font-family:'IBM Plex Mono',monospace;font-size:.68rem;color:var(--soil-45);margin:2px 0 8px}
+  .line .lsize{font-family:'IBM Plex Mono',monospace;font-size:.64rem;letter-spacing:.06em;text-transform:uppercase;color:var(--brass)}
+  .qty{display:flex;align-items:center;gap:0;margin-top:10px;border:1px solid var(--soil-15);width:max-content}
+  .qty button{width:28px;height:28px;font-size:1rem;color:var(--soil);display:flex;align-items:center;justify-content:center}
+  .qty button:hover{background:var(--soil);color:var(--paper)}
+  .qty span{width:34px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:.82rem}
+  .line .lright{text-align:right;display:flex;flex-direction:column;justify-content:space-between}
+  .line .lprice{font-family:'IBM Plex Mono',monospace;font-size:.9rem;font-weight:500}
+  .line .lremove{font-family:'IBM Plex Mono',monospace;font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;color:var(--soil-45);text-decoration:underline;text-underline-offset:2px}
+  .line .lremove:hover{color:var(--growth)}
+
+  .drawer-foot{padding:22px 26px 26px;border-top:1px solid var(--brass);background:var(--card)}
+  .subtotal{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+  .subtotal .l{font-family:'IBM Plex Mono',monospace;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--soil-45)}
+  .subtotal .v{font-family:'Abril Fatface',serif;font-size:1.7rem}
+  .foot-note{font-size:.78rem;color:var(--soil-45);margin-bottom:18px;line-height:1.5}
+  .checkout{width:100%;background:var(--soil);color:var(--paper);padding:16px;font-family:'IBM Plex Mono',monospace;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;transition:background .2s}
+  .checkout:hover{background:var(--growth)}
+  .checkout:disabled{background:var(--soil-15);color:var(--soil-45);cursor:not-allowed}
+
+  /* reserve / confirm views inside drawer */
+  .reserve{padding:6px 0 20px}
+  .reserve label{display:block;font-family:'IBM Plex Mono',monospace;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--soil-45);margin:16px 0 7px}
+  .reserve input,.reserve select{
+    width:100%;background:var(--card);border:1px solid var(--soil-15);
+    padding:12px 13px;font-family:'IBM Plex Sans';font-size:.95rem;color:var(--soil);outline:none;
+  }
+  .reserve input:focus,.reserve select:focus{border-color:var(--growth)}
+  .back{font-family:'IBM Plex Mono',monospace;font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:var(--growth);margin-bottom:6px;display:inline-flex;gap:6px}
+  .confirm{text-align:center;padding:50px 26px}
+  .confirm .ok{width:64px;height:64px;margin:0 auto 22px;border:2px solid var(--growth);color:var(--growth);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem}
+  .confirm h3{font-family:'Abril Fatface',serif;font-size:1.8rem;margin-bottom:12px}
+  .confirm p{color:var(--soil-70);font-size:.94rem;max-width:32ch;margin:0 auto 8px;line-height:1.55}
+  .confirm .ref{font-family:'IBM Plex Mono',monospace;font-size:.8rem;color:var(--growth);margin-top:16px}
+
+  /* reveal helper */
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s ease}
+  .reveal.in{opacity:1;transform:none}
+
+  @media(max-width:780px){
+    .foot-inner{grid-template-columns:1fr;gap:32px}
+    .hero .rings{opacity:.28;right:-32vw}
+    .band{padding-left:0}
+  }
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important;scroll-behavior:auto}
+    .reveal,.card{opacity:1;transform:none}
+    .marquee div{animation:none}
+  }
+</style>
+</head>
+<body>
+
+<nav id="nav" class="on-dark">
+  <a class="brand" href="#top">
+    <span class="mark">Plants of Place</span>
+    <span class="sub">Gardener &amp; Son</span>
+  </a>
+  <button class="patch-btn" onclick="openDrawer()">
+    Your Patch <span class="patch-count" id="navCount">0</span>
+  </button>
+</nav>
+
+<!-- HERO -->
+<header class="hero" id="top">
+  <svg class="rings" viewBox="0 0 400 400" aria-hidden="true">
+    <circle cx="200" cy="200" r="60"/><circle cx="200" cy="200" r="110"/>
+    <circle cx="200" cy="200" r="160"/><circle cx="200" cy="200" r="198"/>
+  </svg>
+  <div class="hero-inner">
+    <span class="eyebrow">Indigenous micro-nursery · propagated to Country</span>
+    <h1>The plants that <em>belong</em> here.</h1>
+    <p class="lede">Every garden begins with a place. Tell us where yours is, and we'll show you the plant community that grew there before the streets did — ready to plant, layer by layer.</p>
+
+    <div class="finder">
+      <span class="finder-label">Find your place</span>
+      <div class="finder-row">
+        <input id="addr" type="text" placeholder="Enter your street address or suburb" autocomplete="off"
+               onkeydown="if(event.key==='Enter')findPlace()">
+        <button onclick="findPlace()">Find my palette</button>
+      </div>
+      <div class="chips">
+        <button class="chip" onclick="findPlace('Mont Albert')">Mont Albert <span>→ Valley Grassy Forest</span></button>
+        <button class="chip" onclick="findPlace('Sunbury')">Sunbury <span>→ Plains Grassy Woodland</span></button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- PLACE BANNER -->
+<section class="place" id="place">
+  <div class="place-inner">
+    <div class="place-tag">
+      <span class="code mono" id="placeCode">EVC 47</span>
+      <span class="rule"></span>
+    </div>
+    <h2 id="placeName">Valley Grassy Forest</h2>
+    <p class="desc" id="placeDesc"></p>
+    <p class="switch">Not your place? <a onclick="scrollToTop()">Search another address ↑</a></p>
+  </div>
+</section>
+
+<!-- PALETTE -->
+<main class="palette" id="palette" style="display:none">
+  <div class="palette-head">
+    <div>
+      <span class="eyebrow">Your palette</span>
+      <h3 id="paletteTitle">Valley Grassy Forest</h3>
+    </div>
+    <div class="count" id="paletteCount"></div>
+  </div>
+  <div class="strata" id="strata">
+    <div class="section-scale"></div>
+    <!-- bands injected -->
+  </div>
+</main>
+
+<!-- ETHOS -->
+<section class="ethos">
+  <span class="eyebrow">The Gardener &amp; Son way</span>
+  <p>We don't sell plants. We return a <b>community</b> to the ground it came from — grown from local seed, planted in its layers.</p>
+</section>
+
+<div class="marquee" aria-hidden="true"><div id="marq"></div></div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-inner">
+    <div>
+      <div class="mark">Plants of Place</div>
+      <div class="by">An ecological studio project by Gardener &amp; Son</div>
+      <p class="blurb">A micro-nursery of indigenous plants, propagated from local provenance and offered by the community they belong to — not the aisle they'd sit in.</p>
+    </div>
+    <div>
+      <h4>Collect from</h4>
+      <ul>
+        <li><b>Mont Albert studio</b><br>2 Churchill Street</li>
+        <li><b>Hawthorn studio</b><br>140 Auburn Road</li>
+      </ul>
+    </div>
+    <div>
+      <h4>The ecosystem</h4>
+      <ul>
+        <li>findmyevc.com</li>
+        <li>ecologicalregistry.org</li>
+        <li>plantsofplace.com</li>
+        <li>guide.gardenerandson.com</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot-rule">
+    <span>© 2026 Gardener &amp; Son — grown to Country</span>
+    <span>Palettes drawn from Victorian EVC benchmarks</span>
+  </div>
+</footer>
+
+<!-- PATCH DRAWER -->
+<div class="scrim" id="scrim" onclick="closeDrawer()"></div>
+<aside class="drawer" id="drawer" aria-label="Your patch">
+  <div class="drawer-head">
+    <div>
+      <div class="t">Your Patch</div>
+      <div class="s" id="drawerPlace">No place chosen yet</div>
+    </div>
+    <button class="drawer-close" onclick="closeDrawer()" aria-label="Close">×</button>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+  <div class="drawer-foot" id="drawerFoot"></div>
+</aside>
+
+<script>
+/* ---------------- SILHOUETTES (by layer) ---------------- */
+const GLYPH = {
+  canopy:`<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M24 44V28"/><path d="M24 30c-7 0-12-5-12-11 0-3 1.5-5.5 3.5-7C15 8 19 5 24 5s9 3 8.5 5c2 1.5 3.5 4 3.5 7 0 6-5 11-12 11Z"/><path d="M24 30v-9m0 4-4-3m4 6 4-3"/></svg>`,
+  understorey:`<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M24 44V22"/><path d="M24 24c-2.5-4-7-5-11-4 1 4 5 7 9 6.5M24 26c2.5-5 7.5-6.5 12-5-1.5 5-6 8-10.5 7"/><path d="M24 22c-1.5-3-5-4-8-3.5.7 3 3.5 5 6.5 4.5"/></svg>`,
+  shrub:`<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M24 44V30"/><path d="M24 32c-6 0-11-4-11-9 0-2 1-4 2.5-5C14 15 18 12 24 12s10 3 8.5 6c1.5 1 2.5 3 2.5 5 0 5-5 9-11 9Z"/></svg>`,
+  ground:`<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M24 44c-2-14-2-14-6-24M24 44c1-13 4-20 8-25M24 44V13M24 44c-3-11-6-16-11-22M24 44c4-12 8-17 13-21"/></svg>`,
+  herb:`<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M24 44V20"/><circle cx="24" cy="13" r="5"/><path d="M24 13h-.01"/><path d="M24 26c-3-2-7-2-9 0 1 3 6 3 9 1M24 30c3-2 7-2 9 0-1 3-6 3-9 1"/></svg>`
+};
+
+/* ---------------- DATA: EVCs & palettes ---------------- */
+const LAYERS = [
+  {key:'canopy',      name:'Canopy',            h:'8–25 m'},
+  {key:'understorey', name:'Understorey',       h:'4–10 m'},
+  {key:'shrub',       name:'Shrub layer',       h:'1–3 m'},
+  {key:'ground',      name:'Ground layer',      h:'0.3–1 m'},
+  {key:'herb',        name:'Herbs & lilies',    h:'0.1–0.5 m'}
+];
+const LAYER_ROLE = {
+  canopy:'The frame. Habitat, shade and the slow architecture the whole community grows beneath.',
+  understorey:'Small trees and wattles that knit the canopy to the ground and feed the soil.',
+  shrub:'Structure and shelter — nectar, nesting and the thicket small birds live in.',
+  ground:'Tussock grasses that hold the soil, carry fire lightly and set the meadow floor.',
+  herb:'Lilies, everlastings and forbs — the seasonal colour and the pollinators\' larder.'
+};
+
+const EVCS = {
+  47:{
+    name:'Valley Grassy Forest',
+    desc:'The moist, fertile forest of the eastern gully slopes — Hawthorn, Kew, Surrey Hills. A peppermint-and-stringybark canopy over a grassy, lily-rich floor. One of the leafiest communities Melbourne ever grew.',
+    plants:[
+      {l:'canopy',bot:'Eucalyptus radiata',com:'Narrow-leaf Peppermint',note:'Fine-leaved, fragrant canopy tree — the backbone of the valley forest.',prov:'Local seed · Boroondara',t:4.5,a:16},
+      {l:'canopy',bot:'Eucalyptus obliqua',com:'Messmate Stringybark',note:'Rough-barked and long-lived; hollows for gliders and owls in time.',prov:'Local seed · Boroondara',t:4.5,a:16},
+      {l:'understorey',bot:'Acacia melanoxylon',com:'Blackwood',note:'Fast, shade-giving wattle that fixes nitrogen and lifts the soil.',prov:'Local seed · Yarra catchment',t:4.5,a:14},
+      {l:'understorey',bot:'Acacia mearnsii',com:'Black Wattle',note:'Feathery pioneer — cover and forage while the slow trees establish.',prov:'Local seed · Yarra catchment',t:4.5,a:14},
+      {l:'shrub',bot:'Bursaria spinosa',com:'Sweet Bursaria',note:'Cream summer flower, thorny shelter; host to the eltham copper butterfly.',prov:'Local seed',t:4,a:12},
+      {l:'shrub',bot:'Goodenia ovata',com:'Hop Goodenia',note:'Bright yellow, quick to fill gaps and soften a new planting.',prov:'Cutting-grown',t:4,a:12},
+      {l:'ground',bot:'Poa labillardierei',com:'Common Tussock-grass',note:'Big soft tussock for creek lines and shade — the meadow\'s workhorse.',prov:'Local seed',t:3.5,a:9},
+      {l:'ground',bot:'Microlaena stipoides',com:'Weeping Grass',note:'Soft, shade-tolerant lawn alternative that stays green through summer.',prov:'Local seed',t:3.5,a:9},
+      {l:'herb',bot:'Dianella admixta',com:'Black-anther Flax-lily',note:'Strappy, tough, blue-flowered; edible violet berries by late summer.',prov:'Division-grown',t:4,a:9},
+      {l:'herb',bot:'Arthropodium strictum',com:'Chocolate Lily',note:'Slender spring spike that genuinely smells of chocolate.',prov:'Local seed',t:4,a:9},
+      {l:'herb',bot:'Viola hederacea',com:'Ivy-leaf Violet',note:'Spreading groundcover for damp shade, flecked purple-and-white.',prov:'Division-grown',t:4,a:9}
+    ]
+  },
+  55:{
+    name:'Plains Grassy Woodland',
+    desc:'The open woodland of the volcanic plains — widely spaced Yellow Box and Grey Box over a sea of Kangaroo Grass and lilies. Drier, sunnier, and one of the most cleared communities in the state.',
+    plants:[
+      {l:'canopy',bot:'Eucalyptus melliodora',com:'Yellow Box',note:'Golden-barked, drought-hardy and the finest of honey trees.',prov:'Local seed · Volcanic plains',t:4.5,a:16},
+      {l:'canopy',bot:'Eucalyptus microcarpa',com:'Grey Box',note:'Dense, slow, and long-lived — the plains woodland\'s anchor tree.',prov:'Local seed · Volcanic plains',t:4.5,a:16},
+      {l:'understorey',bot:'Allocasuarina verticillata',com:'Drooping Sheoak',note:'Weeping she-oak; the whispering canopy black cockatoos feed in.',prov:'Local seed',t:4.5,a:14},
+      {l:'understorey',bot:'Acacia implexa',com:'Lightwood',note:'Sickle-leaved wattle, tough and upright on dry open ground.',prov:'Local seed',t:4.5,a:14},
+      {l:'shrub',bot:'Acacia paradoxa',com:'Hedge Wattle',note:'Prickly, dense refuge for small birds; blazing gold in late winter.',prov:'Local seed',t:4,a:12},
+      {l:'shrub',bot:'Dodonaea viscosa',com:'Sticky Hop-bush',note:'Papery pink seed-capsules; fast, hardy screening in full sun.',prov:'Local seed',t:4,a:12},
+      {l:'ground',bot:'Themeda triandra',com:'Kangaroo Grass',note:'The signature grass of the plains — bronze in summer, deeply rooted.',prov:'Local seed',t:3.5,a:9},
+      {l:'ground',bot:'Rytidosperma caespitosum',com:'Common Wallaby-grass',note:'Fine fluffy-seeded tussock that self-sows through the meadow.',prov:'Local seed',t:3.5,a:9},
+      {l:'herb',bot:'Bulbine bulbosa',com:'Bulbine Lily',note:'Starry yellow spring lily from an edible corm — plains classic.',prov:'Local seed',t:4,a:9},
+      {l:'herb',bot:'Chrysocephalum apiculatum',com:'Common Everlasting',note:'Silver foliage, gold buttons all summer — a pollinator magnet.',prov:'Cutting-grown',t:4,a:9},
+      {l:'herb',bot:'Wahlenbergia stricta',com:'Tall Bluebell',note:'Nodding pale-blue bells on wiry stems through the warm months.',prov:'Local seed',t:4,a:9}
+    ]
+  }
+};
+
+/* address → EVC (mock resolver; real build wires the fmevc geospatial lookup) */
+function resolveEVC(q){
+  const s=(q||'').toLowerCase();
+  const plains=['sunbury','melton','werribee','craigieburn','plains','deer park','tarneit'];
+  if(plains.some(p=>s.includes(p))) return 55;
+  return 47; // leafy east default
+}
+
+/* ---------------- STATE ---------------- */
+let currentEVC=null;
+let patch={}; // key -> {evc,l,bot,com,size,price,qty}
+let drawerView='cart'; // cart | reserve | confirm
+
+/* ---------------- PLACE + PALETTE ---------------- */
+function findPlace(preset){
+  const q = preset || document.getElementById('addr').value;
+  if(preset) document.getElementById('addr').value=preset;
+  const code = resolveEVC(q);
+  currentEVC = code;
+  const evc = EVCS[code];
+
+  document.getElementById('placeCode').textContent='EVC '+code;
+  document.getElementById('placeName').textContent=evc.name;
+  document.getElementById('placeDesc').textContent=evc.desc;
+  document.getElementById('paletteTitle').textContent=evc.name;
+  document.getElementById('paletteCount').textContent=evc.plants.length+' plants · '+LAYERS.filter(L=>evc.plants.some(p=>p.l===L.key)).length+' layers';
+  document.getElementById('drawerPlace').textContent='EVC '+code+' · '+evc.name;
+
+  buildPalette(evc);
+  document.getElementById('place').classList.add('open');
+  document.getElementById('palette').style.display='block';
+  setTimeout(()=>{document.getElementById('place').scrollIntoView({behavior:'smooth'});},260);
+}
+
+function buildPalette(evc){
+  const strata=document.getElementById('strata');
+  strata.querySelectorAll('.band').forEach(b=>b.remove());
+  LAYERS.forEach(L=>{
+    const ps=evc.plants.filter(p=>p.l===L.key);
+    if(!ps.length) return;
+    const band=document.createElement('div');
+    band.className='band';
+    band.innerHTML=`
+      <div class="band-head">
+        <span class="layer">${L.name}</span>
+        <span class="h">${L.h}</span>
+        <span class="role">${LAYER_ROLE[L.key]}</span>
+      </div>
+      <div class="grid">${ps.map(p=>cardHTML(p)).join('')}</div>`;
+    strata.appendChild(band);
+  });
+  observeCards();
+}
+
+function cardHTML(p){
+  const key=cardKey(p);
+  return `<article class="card" data-key="${key}">
+    <div class="glyph">${GLYPH[p.l]}</div>
+    <div class="bot mono">${p.bot}</div>
+    <div class="com">${p.com}</div>
+    <p class="note">${p.note}</p>
+    <div class="prov">${p.prov}</div>
+    <div class="buy">
+      <div class="size-sel">
+        <select onchange="onSize('${key}',this.value)">
+          <option value="t">Tube · forestry</option>
+          <option value="a">Advanced · 140mm</option>
+        </select>
+      </div>
+      <div class="price-line">
+        <span class="per" id="per-${key}">per tube</span>
+        <span class="price" id="price-${key}">$${p.t.toFixed(2)}</span>
+      </div>
+    </div>
+    <div class="cardfoot">
+      <span class="per mono" style="color:var(--soil-45)">Plant 4–6 per m² in drifts</span>
+      <button class="add" onclick="addToPatch('${key}')" aria-label="Add ${p.com} to patch">+</button>
+    </div>
+  </article>`;
+}
+
+const sizeState={}; // key -> 't'|'a'
+function cardKey(p){return (currentEVC+'-'+p.bot).replace(/[^a-z0-9]/gi,'');}
+function findPlantByKey(key){
+  const evc=EVCS[currentEVC];
+  return evc.plants.find(p=>cardKey(p)===key);
+}
+function onSize(key,val){
+  sizeState[key]=val;
+  const p=findPlantByKey(key);
+  document.getElementById('price-'+key).textContent='$'+(val==='a'?p.a:p.t).toFixed(2);
+  document.getElementById('per-'+key).textContent=(val==='a'?'per pot':'per tube');
+}
+
+/* ---------------- CART ---------------- */
+function addToPatch(key){
+  const p=findPlantByKey(key);
+  const size=sizeState[key]||'t';
+  const price=size==='a'?p.a:p.t;
+  const id=key+'-'+size;
+  if(patch[id]) patch[id].qty++;
+  else patch[id]={evc:currentEVC,l:p.l,bot:p.bot,com:p.com,size,price,qty:1};
+  renderPatch();
+  bumpCount();
+}
+function bumpCount(){
+  const el=document.getElementById('navCount');
+  el.classList.add('bump');
+  setTimeout(()=>el.classList.remove('bump'),260);
+}
+function patchCount(){return Object.values(patch).reduce((n,i)=>n+i.qty,0);}
+function patchTotal(){return Object.values(patch).reduce((s,i)=>s+i.price*i.qty,0);}
+
+function renderPatch(){
+  document.getElementById('navCount').textContent=patchCount();
+  const items=Object.entries(patch);
+  const body=document.getElementById('drawerBody');
+  const foot=document.getElementById('drawerFoot');
+
+  if(drawerView==='confirm'){return;} // confirm view keeps its own markup
+
+  if(!items.length){
+    body.innerHTML=`<div class="empty">
+      ${GLYPH.ground}
+      <p>Your patch is empty. Find your place, then add the plants that belong to it — layer by layer.</p></div>`;
+    foot.innerHTML='';
+    return;
+  }
+
+  if(drawerView==='reserve'){ renderReserve(); return; }
+
+  body.innerHTML=items.map(([id,i])=>`
+    <div class="line">
+      <div class="lglyph">${GLYPH[i.l]}</div>
+      <div class="linfo">
+        <div class="lcom">${i.com}</div>
+        <div class="lbot mono">${i.bot}</div>
+        <div class="lsize">${i.size==='a'?'Advanced · 140mm':'Tube · forestry'}</div>
+        <div class="qty">
+          <button onclick="setQty('${id}',-1)" aria-label="Fewer">−</button>
+          <span>${i.qty}</span>
+          <button onclick="setQty('${id}',1)" aria-label="More">+</button>
+        </div>
+      </div>
+      <div class="lright">
+        <div class="lprice mono">$${(i.price*i.qty).toFixed(2)}</div>
+        <button class="lremove" onclick="removeLine('${id}')">Remove</button>
+      </div>
+    </div>`).join('');
+
+  foot.innerHTML=`
+    <div class="subtotal"><span class="l">${patchCount()} plants</span><span class="v mono">$${patchTotal().toFixed(2)}</span></div>
+    <p class="foot-note">Reserve your patch and pay on collection from Mont Albert or Hawthorn. We grow to order — larger drifts may take a season to raise.</p>
+    <button class="checkout" onclick="goReserve()">Reserve your patch →</button>`;
+}
+function setQty(id,d){
+  if(!patch[id])return;
+  patch[id].qty+=d;
+  if(patch[id].qty<=0) delete patch[id];
+  renderPatch();
+}
+function removeLine(id){delete patch[id];renderPatch();}
+
+/* ---------------- RESERVE + CONFIRM ---------------- */
+function goReserve(){drawerView='reserve';renderPatch();}
+function backToCart(){drawerView='cart';renderPatch();}
+function renderReserve(){
+  const body=document.getElementById('drawerBody');
+  const foot=document.getElementById('drawerFoot');
+  body.innerHTML=`
+    <div class="reserve">
+      <button class="back" onclick="backToCart()">← Back to patch</button>
+      <label>Your name</label><input id="rName" type="text" placeholder="Full name">
+      <label>Email</label><input id="rEmail" type="email" placeholder="you@email.com">
+      <label>Collect from</label>
+      <select id="rStudio">
+        <option>Mont Albert studio — 2 Churchill Street</option>
+        <option>Hawthorn studio — 140 Auburn Road</option>
+      </select>
+    </div>`;
+  foot.innerHTML=`
+    <div class="subtotal"><span class="l">${patchCount()} plants</span><span class="v mono">$${patchTotal().toFixed(2)}</span></div>
+    <p class="foot-note">No payment now — we'll confirm availability and a collection week by email.</p>
+    <button class="checkout" onclick="confirmReserve()">Confirm reservation</button>`;
+}
+function confirmReserve(){
+  const name=(document.getElementById('rName')||{}).value||'';
+  const email=(document.getElementById('rEmail')||{}).value||'';
+  if(!name.trim()||!email.trim()){
+    alert('Please add your name and email so we can confirm your patch.');return;
+  }
+  const ref='POP-'+currentEVC+'-'+Math.random().toString(36).slice(2,6).toUpperCase();
+  drawerView='confirm';
+  document.getElementById('drawerBody').innerHTML=`
+    <div class="confirm">
+      <div class="ok">✓</div>
+      <h3>Your patch is reserved</h3>
+      <p>Thanks ${name.split(' ')[0]||''} — we've noted your ${patchCount()}-plant patch for ${EVCS[currentEVC].name}.</p>
+      <p>We'll email you at ${email} to confirm availability and a collection week.</p>
+      <div class="ref mono">${ref}</div>
+    </div>`;
+  document.getElementById('drawerFoot').innerHTML=`<button class="checkout" onclick="resetPatch()">Start a new patch</button>`;
+  patch={};
+  document.getElementById('navCount').textContent='0';
+}
+function resetPatch(){drawerView='cart';renderPatch();closeDrawer();}
+
+/* ---------------- DRAWER ---------------- */
+function openDrawer(){
+  if(drawerView!=='confirm')drawerView='cart';
+  renderPatch();
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('scrim').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeDrawer(){
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('scrim').classList.remove('open');
+  document.body.style.overflow='';
+}
+function scrollToTop(){window.scrollTo({top:0,behavior:'smooth'});}
+
+/* ---------------- SCROLL EFFECTS ---------------- */
+const nav=document.getElementById('nav');
+const hero=document.querySelector('.hero');
+window.addEventListener('scroll',()=>{
+  const y=window.scrollY;
+  if(y>40)nav.classList.add('scrolled');else nav.classList.remove('scrolled');
+  // nav is on-dark only while over the hero
+  if(y < hero.offsetHeight-90)nav.classList.add('on-dark');else nav.classList.remove('on-dark');
+});
+function observeCards(){
+  const io=new IntersectionObserver((entries)=>{
+    entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('in'),i*40);io.unobserve(e.target);}});
+  },{threshold:.15});
+  document.querySelectorAll('.card:not(.in)').forEach(c=>io.observe(c));
+}
+
+/* marquee content */
+document.getElementById('marq').innerHTML=
+  '<span>Grown from local seed</span><span>Planted in its layers</span><span>Provenance, not product</span><span>Canopy to ground</span>'.repeat(2);
+</script>
+</body>
+</html>
